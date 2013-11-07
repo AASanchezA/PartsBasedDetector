@@ -33,3 +33,21 @@ install_manifest.txt
 
 #DATABASE
 *.jpg
+*.png
+
+#MATLAB MEX
+*.mexa64
+
+#MAT file
+*.mat
+
+.cproject
+.gitignore~
+.project
+doc/Doxyfile
+doc/html/
+doc/latex/
+matlab/cache/
+src/ModelTransfer
+src/PartsBasedDetector
+
