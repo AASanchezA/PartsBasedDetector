@@ -37,6 +37,7 @@
  */
 
 #include <boost/filesystem.hpp>
+#include <cstdio>
 #include "PartsBasedDetector.hpp"
 #include "Candidate.hpp"
 #include "FileStorageModel.hpp"
@@ -87,10 +88,11 @@ int main(int argc, char** argv) {
 	// load the image from file
 	Mat_<float> depth;
 	Mat im = imread(argv[2]);
-        if (im.empty()) {
-            printf("Image not found or invalid image format\n");
-            exit(-4);
-        }
+	resize(im, im, Size(640,480));
+	if (im.empty()) {
+		printf("Image not found or invalid image format\n");
+		exit(-4);
+	}
 	if (argc == 4) {
 		depth = imread(argv[3], IMREAD_ANYDEPTH);
 		// convert the depth image from mm to m
@@ -105,11 +107,11 @@ int main(int argc, char** argv) {
 	// display the best candidates
 	Visualize visualize(model->name());
 	SearchSpacePruning<float> ssp;
-        Mat canvas;
+	Mat canvas;
 	if (candidates.size() > 0) {
 	    Candidate::sort(candidates);
-	    //Candidate::nonMaximaSuppression(im, candidates, 0.2);
-	    visualize.candidates(im, candidates, canvas, true);
+	    Candidate::nonMaximaSuppression(im, candidates, 0.2);
+	    visualize.candidates(im, candidates, 5, canvas, true);
             visualize.image(canvas);
 	    waitKey();
 	}

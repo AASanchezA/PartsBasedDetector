@@ -83,8 +83,9 @@ public:
 		for (size_t n = 0; n < parts_.size(); ++n) {
 			parts_[n].height *= factor;
 			parts_[n].width  *= factor;
-			parts_[n].y      *= factor;
-			parts_[n].x      *= factor;
+			//redefine upper left conner
+			parts_[n].y      += parts_[n].height*(1-factor)*0.5;
+			parts_[n].x      += parts_[n].width*(1-factor)*0.5;
 		}
 	}
 	//! descending comparison method for ordering objects of type Candidate
@@ -104,8 +105,12 @@ public:
 	 */
 	cv::Rect boundingBox(void) const {
 		cv::Rect hull = parts_[0];
+		std::cout << " part_0" << parts_[0] << std::endl;
+		std::cout << " part_size" << parts_.size() << std::endl;
 		for (size_t n = 0; n < parts_.size(); ++n) {
 			hull = hull | parts_[n];
+			std::cout << " part_" << parts_[n] << std::endl;
+			std::cout << " hull" << hull << std::endl;
 		}
 		return hull;
 	}
@@ -127,6 +132,8 @@ public:
 		cv::meanStdDev(xpts, xmean, xstd);
 		cv::meanStdDev(ypts, ymean, ystd);
 		return cv::Rect(xmean(0)-1.5*xstd(0), ymean(0)-1.5*ystd(0), 3*xstd(0), 3*ystd(0));
+//		std::cout << " xmean_" << xmean(0) << std::endl;
+//		return cv::Rect(xmean(0) - xstd(0), ymean(0) - ystd(0) , xstd(0), ystd(0));
 	}
 
 	/*! @brief create a single bounding box in 3D

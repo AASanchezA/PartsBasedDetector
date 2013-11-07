@@ -1,5 +1,7 @@
 function pos = pointtobox(pos,pa)
 
+octave = isoctave();
+
 len = zeros(length(pos),length(pa)-1);
 for n = 1:length(pos)
   points = pos(n).point;
@@ -20,7 +22,11 @@ end
 boxsize = zeros(1,length(pos));
 for n = 1:length(pos)
   ratio = len(n,:)./r;
-  boxsize(n) = quantile(ratio(:),0.85, 1, 7);
+  if octave
+      boxsize(n) = quantile(ratio(:),0.85, 1, 7);
+  else
+      boxsize(n) = quantile(ratio(:),0.85);
+  end
 end
 
 for n = 1:length(pos)

@@ -54,8 +54,8 @@ using namespace std;
 void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, size_t N, Mat& canvas, bool display_confidence) const {
 
 	// create a new canvas that we can modify
-  cvtColor(im, canvas, COLOR_RGB2BGR);
-  if (candidates.size() == 0) return;
+	cvtColor(im, canvas, COLOR_RGB2BGR);
+	if (candidates.size() == 0) return;
 
 	// generate a set of colors to display. Do this in HSV then convert it
 	const size_t ncolors = candidates[0].parts().size();

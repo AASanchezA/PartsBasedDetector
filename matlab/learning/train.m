@@ -30,6 +30,8 @@ if nargin < 9
   no_sv = (wpos+1) * length(pos);
   maxsize = 10 * no_sv * 4 * sparselen(model) / 1e9;
   maxsize = min(max(maxsize,6),7.5);
+  maxsize = 3; %Uncomment this line to run comfortably on machines with 4GB of memory
+  %maxsize = 5; %Uncomment this line to run comfortable on machines with 8GB memory
   % the current version of octave does really bad memory reallocations
   % when slicing, so we can't use too much memory otherwise it starts paging
   if isoctave() maxsize = 1.8; end
