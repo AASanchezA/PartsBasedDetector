@@ -79,16 +79,17 @@ void PartsBasedDetector<T>::detect(const Mat& im, const Mat& depth, vectorCandid
 	convolution_engine_->pdf(pyramid, pdf);
 
 //	std::cout << " pdf size" << pdf.size() << std::endl;
-//
-//	namedWindow("test1");
+
+//	namedWindow("test1", WINDOW_NORMAL);
 //	for(int i = 0; i < pdf.size();++i)
 //	{
+//		std::cout << " pdf size [" << i << "][" << 0 << "]= " <<pdf[i][0].size() << std::endl;
 //		for(int j = 0; j < pdf[i].size();++j)
 //		{
 //			imshow("test1",pdf[i][j]);
 //			std::cout << " pdf size [" << i << "]= "<< pdf[i].size() << std::endl;
 //			std::cout << " pdf size [" << i << "][" << j << "]= " <<pdf[i][j].size() << std::endl;
-//			waitKey(1000);
+//			waitKey(100);
 //		}
 //	}
 
@@ -101,7 +102,7 @@ void PartsBasedDetector<T>::detect(const Mat& im, const Mat& depth, vectorCandid
 //	ssp_.nonMaxSuppression(rootv, features_->scales());
 
 	// walk back down the tree to find the part locations
-	dp_.argmin(parts_, rootv, rooti, features_->scales(), Ix, Iy, Ik, candidates);
+	dp_.argmin(parts_, pdf, rootv, rooti, features_->scales(), Ix, Iy, Ik, candidates);
 
 	if (!depth.empty()) {
 		//ssp_.filterCandidatesByDepth(parts_, candidates, depth, 0.03);

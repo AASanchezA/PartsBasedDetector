@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 	if (candidates.size() > 0) {
 	    Candidate::sort(candidates);
 	    Candidate::nonMaximaSuppression(im, candidates, 0.3);
-	    visualize.candidates(im, candidates, 2, canvas, true);
+	    visualize.candidates(im, candidates, 1, canvas, true);
 	    visualize.image(canvas);
 	    waitKey();
 	}

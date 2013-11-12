@@ -187,7 +187,7 @@ void DynamicProgram<T>::min(Parts& parts, vector2DMat& scores, vector4DMat& Ix, 
  * @param candidates
  */
 template<typename T>
-void DynamicProgram<T>::argmin(Parts& parts, const vector2DMat& rootv, const vector2DMat& rooti, const vectorf scales, const vector4DMat& Ix, const vector4DMat& Iy, const vector4DMat& Ik, vectorCandidate& candidates) {
+void DynamicProgram<T>::argmin(Parts& parts, vector2DMat& scores, const vector2DMat& rootv, const vector2DMat& rooti, const vectorf scales, const vector4DMat& Ix, const vector4DMat& Iy, const vector4DMat& Ik, vectorCandidate& candidates) {
 
 	// for each scale, and each component, traverse back down the tree to retrieve the part positions
 	const size_t nscales = scales.size();
@@ -196,7 +196,13 @@ void DynamicProgram<T>::argmin(Parts& parts, const vector2DMat& rootv, const vec
 	#endif
 	for (size_t n = 0; n < nscales; ++n) {
 		T scale = scales[n];
-		std::cout << "scale = " << scale << std::endl;
+//		std::cout << "scale[" << n << "]= " << scale << std::endl;
+//		std::cout << "pdf[" << n << "]= " << scores[n][0].size() << std::endl;
+		T diff_h = 480 - scale*(scores[n][0].size().height);
+		T diff_w = 640 - scale*(scores[n][0].size().width);
+//		std::cout << "diff_h[" << n << "]= " << diff_h/2 << std::endl;
+//		std::cout << "diff_w[" << n << "]= " << diff_w/2 << std::endl;
+
 		for (size_t c = 0; c < parts.ncomponents(); ++c) {
 
 			// get the scores and indices for this tree of parts
@@ -236,7 +242,8 @@ void DynamicProgram<T>::argmin(Parts& parts, const vector2DMat& rootv, const vec
 					}
 
 					// calculate the bounding rectangle and add it to the Candidate
-					Point pone = Point(scale,scale);
+//					Point pone = Point(std::min(floor(diff_w/2),floor(diff_h/2)));
+					Point pone = Point(floor(diff_w/2),floor(diff_h/2));
 					Point xy1 = (Point(xv[p],yv[p])-pone)*scale;
 					Point xy2 = xy1 + Point(part.xsize(mv[p]), part.ysize(mv[p]))*scale;
 
