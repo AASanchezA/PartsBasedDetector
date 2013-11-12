@@ -84,8 +84,11 @@ public:
 			parts_[n].height *= factor;
 			parts_[n].width  *= factor;
 			//redefine upper left conner
+//			parts_[n].y      *= factor;
+//			parts_[n].x      *= factor;
 			parts_[n].y      += parts_[n].height*(1-factor)*0.5;
 			parts_[n].x      += parts_[n].width*(1-factor)*0.5;
+			std::cout << "resize" << std::endl;
 		}
 	}
 	//! descending comparison method for ordering objects of type Candidate
@@ -105,13 +108,16 @@ public:
 	 */
 	cv::Rect boundingBox(void) const {
 		cv::Rect hull = parts_[0];
-		std::cout << " part_0" << parts_[0] << std::endl;
-		std::cout << " part_size" << parts_.size() << std::endl;
+//		std::cout << " part_0 " << parts_[0] << std::endl;
+//		std::cout << " part_size " << parts_.size() << std::endl;
 		for (size_t n = 0; n < parts_.size(); ++n) {
 			hull = hull | parts_[n];
-			std::cout << " part_" << parts_[n] << std::endl;
-			std::cout << " hull" << hull << std::endl;
+//			std::cout << " part_ " << parts_[n] << std::endl;
+//			std::cout << " hull " << hull << std::endl;
 		}
+//		hull.x -= 200;
+//		hull.y -= 200;
+//		std::cout << " hull_final " << hull << std::endl;
 		return hull;
 	}
 
