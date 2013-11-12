@@ -99,10 +99,14 @@ int main(int argc, char** argv) {
 		depth = depth / 1000.0f;
 	}
 
+	Visualize viewer("test");
+	viewer.image(im);
+
 	// detect potential candidates in the image
 	vector<Candidate> candidates;
 	pbd.detect(im, depth, candidates);
 	printf("Number of candidates: %ld\n", candidates.size());
+
 
 	// display the best candidates
 	Visualize visualize(model->name());
@@ -110,9 +114,9 @@ int main(int argc, char** argv) {
 	Mat canvas;
 	if (candidates.size() > 0) {
 	    Candidate::sort(candidates);
-	    Candidate::nonMaximaSuppression(im, candidates, 0.2);
-	    visualize.candidates(im, candidates, 5, canvas, true);
-            visualize.image(canvas);
+	    Candidate::nonMaximaSuppression(im, candidates, 0.3);
+	    visualize.candidates(im, candidates, 2, canvas, true);
+	    visualize.image(canvas);
 	    waitKey();
 	}
 	return 0;
