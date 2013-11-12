@@ -40,6 +40,7 @@
 #include "nms.hpp"
 #include "HOGFeatures.hpp"
 #include "SpatialConvolutionEngine.hpp"
+#include <opencv2/highgui/highgui.hpp>
 using namespace cv;
 using namespace std;
 
@@ -77,13 +78,27 @@ void PartsBasedDetector<T>::detect(const Mat& im, const Mat& depth, vectorCandid
 	vector2DMat pdf;
 	convolution_engine_->pdf(pyramid, pdf);
 
+//	std::cout << " pdf size" << pdf.size() << std::endl;
+//
+//	namedWindow("test1");
+//	for(int i = 0; i < pdf.size();++i)
+//	{
+//		for(int j = 0; j < pdf[i].size();++j)
+//		{
+//			imshow("test1",pdf[i][j]);
+//			std::cout << " pdf size [" << i << "]= "<< pdf[i].size() << std::endl;
+//			std::cout << " pdf size [" << i << "][" << j << "]= " <<pdf[i][j].size() << std::endl;
+//			waitKey(1000);
+//		}
+//	}
+
 	// use dynamic programming to predict the best detection candidates from the part responses
 	vector4DMat Ix, Iy, Ik;
 	vector2DMat rootv, rooti;
 	dp_.min(parts_, pdf, Ix, Iy, Ik, rootv, rooti);
 
 	// suppress non-maximal candidates
-	//ssp_.nonMaxSuppression(rootv, features_->scales());
+//	ssp_.nonMaxSuppression(rootv, features_->scales());
 
 	// walk back down the tree to find the part locations
 	dp_.argmin(parts_, rootv, rooti, features_->scales(), Ix, Iy, Ik, candidates);
