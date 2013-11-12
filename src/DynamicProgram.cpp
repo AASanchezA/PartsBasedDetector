@@ -198,6 +198,7 @@ void DynamicProgram<T>::argmin(Parts& parts, vector2DMat& scores, const vector2D
 		T scale = scales[n];
 //		std::cout << "scale[" << n << "]= " << scale << std::endl;
 //		std::cout << "pdf[" << n << "]= " << scores[n][0].size() << std::endl;
+		//TODO generalize solution for image size, problem with big scales
 		T diff_h = 480 - scale*(scores[n][0].size().height);
 		T diff_w = 640 - scale*(scores[n][0].size().width);
 //		std::cout << "diff_h[" << n << "]= " << diff_h/2 << std::endl;
