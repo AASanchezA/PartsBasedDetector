@@ -48,10 +48,11 @@ using namespace std;
  * part locations
  * @param N the number of candidates to render. If the candidates have been sorted,
  * this is equivalent to displaying only the 'N best' candidates
+ * @param factor rescale boundingbox
  * @param display_confidence display the detection confidence above each bounding box
  * for each part
  */
-void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, size_t N, Mat& canvas, bool display_confidence) const {
+void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, size_t N, const float factor, Mat& canvas, bool display_confidence) const {
 
 	// create a new canvas that we can modify
 	cvtColor(im, canvas, COLOR_RGB2BGR);
@@ -77,14 +78,29 @@ void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, siz
 	N = (candidates.size() < N) ? candidates.size() : N;
 	for (size_t n = 0; n < N; ++n) {
 		Candidate candidate = candidates[n];
+		candidate.resize(1);
 		for (size_t p = 0; p < candidate.parts().size(); ++p) {
 			Rect box = candidate.parts()[p];
 			string confidence  = boost::lexical_cast<string>(candidate.confidence()[p]);
 			rectangle(canvas, box, colors[p], LINE_THICKNESS);
 			if (display_confidence && p == 0) putText(canvas, confidence, Point(box.x, box.y-5), FONT_HERSHEY_SIMPLEX, 0.5f, black, 2);
 		}
-		rectangle(canvas, candidate.boundingBox(), Scalar(255, 0, 0), LINE_THICKNESS);
+		rectangle(canvas, candidate.boundingBox(factor), Scalar(255, 0, 0), LINE_THICKNESS);
 	}
+}
+
+/*! @brief visualize the candidate part locations overlaid on an image
+ *
+ * @param im the image
+ * @param candidates a vector of type Candidate, representing potential
+ * part locations
+ * @param N the number of candidates to render. If the candidates have been sorted,
+ * this is equivalent to displaying only the 'N best' candidates
+ * @param display_confidence display the detection confidence above each bounding box
+ * for each part
+ */
+void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, size_t N, Mat& canvas, bool display_confidence) const {
+	Visualize::candidates(im,candidates, N, 1, canvas, display_confidence);
 }
 
 /*! @brief visualize all of the candidate part locations overlaid on an image
@@ -92,6 +108,7 @@ void Visualize::candidates(const Mat& im, const vectorCandidate& candidates, siz
  * @param im the image
  * @param candidates a vector of type Candidate, representing potential
  * part locations
+ * @param canvas
  * @param display_confidence display the detection confidence above each bounding box
  * for each part
  */

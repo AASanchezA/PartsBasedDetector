@@ -50,4 +50,6 @@ doc/latex/
 matlab/cache/
 src/ModelTransfer
 src/PartsBasedDetector
-
+run
+core
+*~

@@ -63,6 +63,7 @@ public:
 	// public methods
 	void candidates(const cv::Mat& im, const vectorCandidate& candidates, cv::Mat& canvas, bool display_confidence = false) const;
 	void candidates(const cv::Mat& im, const vectorCandidate& candidates, size_t N, cv::Mat& canvas, bool display_confidence = false) const;
+	void candidates(const cv::Mat& im, const vectorCandidate& candidates, size_t N, const float factor,cv::Mat& canvas, bool display_confidence = false) const;
 	void candidates(const cv::Mat& im, const Candidate& candidate, cv::Mat& canvas, bool display_confidence = true) const;
 	void image(const cv::Mat& im) const;
 };

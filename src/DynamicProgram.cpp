@@ -178,6 +178,7 @@ void DynamicProgram<T>::min(Parts& parts, vector2DMat& scores, vector4DMat& Ix, 
  * Get the minimum argument of a dynamic program by traversing down the tree of
  * a dynamic program, returning the locations of the best nodes
  * @param parts the tree of parts, referenced by the root
+ * @param scores the probability densities (pdfs) of part locations (fine to coarse)
  * @param rootv the root scores, across scale
  * @param rooti the root indices, across scale
  * @param scales the scales (used to calculate bounding box size)

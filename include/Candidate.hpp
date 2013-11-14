@@ -88,7 +88,6 @@ public:
 //			parts_[n].x      *= factor;
 			parts_[n].y      += parts_[n].height*(1-factor)*0.5;
 			parts_[n].x      += parts_[n].width*(1-factor)*0.5;
-			std::cout << "resize" << std::endl;
 		}
 	}
 	//! descending comparison method for ordering objects of type Candidate
@@ -104,20 +103,19 @@ public:
 
 	/*! @brief create a single bounding box around the detection taken from the part limit
 	 *
+	 * @param rescale factor
 	 * @return a single bounding Rect
 	 */
-	cv::Rect boundingBox(void) const {
+	cv::Rect boundingBox(const float factor) const {
 		cv::Rect hull = parts_[0];
-//		std::cout << " part_0 " << parts_[0] << std::endl;
-//		std::cout << " part_size " << parts_.size() << std::endl;
 		for (size_t n = 0; n < parts_.size(); ++n) {
 			hull = hull | parts_[n];
-//			std::cout << " part_ " << parts_[n] << std::endl;
-//			std::cout << " hull " << hull << std::endl;
 		}
-//		hull.x -= 200;
-//		hull.y -= 200;
-//		std::cout << " hull_final " << hull << std::endl;
+		hull.height *= factor;
+		hull.width  *= factor;
+		//redefine upper left conner
+		hull.y      += hull.height*(1-factor)*0.5;
+		hull.x      += hull.width*(1-factor)*0.5;
 		return hull;
 	}
 
@@ -154,7 +152,7 @@ public:
 
 		const size_t nparts = parts_.size();
 		const cv::Rect bounds = cv::Rect(0,0,0,0) + im.size();
-		const cv::Rect bb  = this->boundingBox();
+		const cv::Rect bb  = this->boundingBox(1);
 		const cv::Rect bbn = this->boundingBoxNorm();
 
 		cv::Size_<double> imsize = im.size();
@@ -304,7 +302,7 @@ public:
 		 * 4) repeat
 		 */
 		for (size_t n = 0; n < N; ++n) {
-			cv::Rect box = candidates[n].boundingBox() & bounds;
+			cv::Rect box = candidates[n].boundingBox(1) & bounds;
 			cv::Scalar boxsum = sum(scratch(box));
 			if (boxsum[0] / box.area() > overlap) continue;
 			scratch(box) = 1;
@@ -331,15 +329,88 @@ public:
 	 * @param mask a mask of type CV_8U the same size as im
 	 */
 	static void mask(const cv::Mat& im, const vectorCandidate& candidates, cv::Mat& mask) {
+		Candidate::mask(im, candidates, candidates.size(), 1, mask);
+	}
+
+	/*! @brief return a masked representation of a set of candidates
+	 *
+	 * Given a vector of candidates which have already been non-maximally
+	 * suppressed, return an image mask where zero values represent
+	 * regions which do not contain objects, and all integer values
+	 * represent unique object locations.
+	 *
+	 * I.e. object_7 = (mask == 7) returns a mask where nonzero elements
+	 * bound the 7th best detection
+	 *
+	 * @param im the input image from which the candidates were found
+	 * @param candidates the vector of candidates
+	 *  @param N the number of candidates to render. If the candidates have been sorted,
+	 * this is equivalent to displaying only the 'N best' candidates
+	 * @param mask a mask of type CV_8U the same size as im
+	 */
+	static void mask(const cv::Mat& im, const vectorCandidate& candidates, size_t N, cv::Mat& mask) {
+		Candidate::mask(im, candidates, N, 1, mask);
+	}
+
+	/*! @brief return a masked representation of a set of candidates
+	 *
+	 * Given a vector of candidates which have already been non-maximally
+	 * suppressed, return an image mask where zero values represent
+	 * regions which do not contain objects, and all integer values
+	 * represent unique object locations.
+	 *
+	 * I.e. object_7 = (mask == 7) returns a mask where nonzero elements
+	 * bound the 7th best detection
+	 *
+	 * @param im the input image from which the candidates were found
+	 * @param candidates the vector of candidates
+	 *  @param N the number of candidates to render. If the candidates have been sorted,
+	 * this is equivalent to displaying only the 'N best' candidates
+	 * @param factor rescale
+	 * @param mask a mask of type CV_8U the same size as im
+	 */
+	static void mask(const cv::Mat& im, const vectorCandidate& candidates, size_t N, const float factor, cv::Mat& mask) {
 
 		// allocate the mask
-		const size_t N = candidates.size();
+		N = (candidates.size() < N) ? candidates.size() : N;
 		mask = cv::Mat::zeros(im.size(), CV_8U);
 		cv::Rect bounds = cv::Rect(0,0,0,0) + im.size();
 
 		for (size_t n = 0; n < N; ++n) {
-			cv::Rect box = candidates[n].boundingBox() & bounds;
+			cv::Rect box = candidates[n].boundingBox(factor) & bounds;
 			mask(box).setTo(n+1, mask(box) == 0);
+		}
+	}
+
+	/*! @brief return a masked representation of a set of candidates
+	 *
+	 * Given a vector of candidates which have already been non-maximally
+	 * suppressed, return an image mask where zero values represent
+	 * regions which do not contain objects, and all integer values
+	 * represent unique object locations.
+	 *
+	 * I.e. object_7 = (mask == 7) returns a mask where nonzero elements
+	 * bound the 7th best detection
+	 *
+	 * @param im the input image from which the candidates were found
+	 * @param candidates the vector of candidates
+	 *  @param N the number of candidates to render. If the candidates have been sorted,
+	 * this is equivalent to displaying only the 'N best' candidates
+	 * @param factor rescale
+	 * @param mask a mask of type CV_8U the same size as im
+	 * @param boxes boundingbox of object
+	 */
+	static void mask(const cv::Mat& im, const vectorCandidate& candidates, size_t N, const float factor, cv::Mat& mask, std::vector<cv::Rect>& boxes) {
+
+		// allocate the mask
+		N = (candidates.size() < N) ? candidates.size() : N;
+		mask = cv::Mat::zeros(im.size(), CV_8U);
+		cv::Rect bounds = cv::Rect(0,0,0,0) + im.size();
+
+		for (size_t n = 0; n < N; ++n) {
+			cv::Rect box = candidates[n].boundingBox(factor) & bounds;
+			mask(box).setTo(n+1, mask(box) == 0);
+			boxes.push_back(box);
 		}
 	}
 
