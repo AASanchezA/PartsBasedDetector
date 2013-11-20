@@ -81,13 +81,11 @@ public:
 	//! rescale the parts
 	void resize(const float factor) {
 		for (size_t n = 0; n < parts_.size(); ++n) {
-			parts_[n].height *= factor;
-			parts_[n].width  *= factor;
 			//redefine upper left conner
-//			parts_[n].y      *= factor;
-//			parts_[n].x      *= factor;
 			parts_[n].y      += parts_[n].height*(1-factor)*0.5;
 			parts_[n].x      += parts_[n].width*(1-factor)*0.5;
+			parts_[n].height *= factor;
+			parts_[n].width  *= factor;
 		}
 	}
 	//! descending comparison method for ordering objects of type Candidate
@@ -111,11 +109,11 @@ public:
 		for (size_t n = 0; n < parts_.size(); ++n) {
 			hull = hull | parts_[n];
 		}
-		hull.height *= factor;
-		hull.width  *= factor;
 		//redefine upper left conner
 		hull.y      += hull.height*(1-factor)*0.5;
 		hull.x      += hull.width*(1-factor)*0.5;
+		hull.height *= factor;
+		hull.width  *= factor;
 		return hull;
 	}
 
